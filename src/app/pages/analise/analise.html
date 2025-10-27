@@ -1,0 +1,480 @@
+<div class="analise-container">
+  <!-- Header -->
+  <div class="analise-header">
+    <h2 class="analise-title">Análise de Dados Públicos</h2>
+    <p class="analise-subtitle">Visualize e compare dados demográficos e financeiros do Brasil</p>
+  </div>
+
+  <!-- Navegação por Seções -->
+  <div class="secoes-navigation">
+    <button 
+      class="secao-button"
+      [class.secao-active]="secaoAtiva === 'ibge'"
+      (click)="selecionarSecao('ibge')">
+      📊 Dados IBGE
+    </button>
+    <button 
+      class="secao-button"
+      [class.secao-active]="secaoAtiva === 'despesas'"
+      (click)="selecionarSecao('despesas')">
+      💰 Despesas Públicas
+    </button>
+    <button 
+      class="secao-button"
+      [class.secao-active]="secaoAtiva === 'comparacao'"
+      (click)="selecionarSecao('comparacao')">
+      📈 Comparação
+    </button>
+  </div>
+
+  <!-- Conteúdo das Seções -->
+  <div class="secoes-content">
+
+    <!-- SEÇÃO IBGE -->
+    <div class="secao-panel" *ngIf="secaoAtiva === 'ibge'">
+      <div class="panel-section">
+        <h3 class="section-title">Análise Demográfica por Estado</h3>
+        
+        <div class="filter-section">
+          <label class="filter-label">Selecione um Estado:</label>
+          <select class="filter-select" [(ngModel)]="estadoSelecionado" (change)="carregarMunicipios()">
+            <option *ngFor="let estado of estados" [value]="estado.sigla">
+              {{ estado.nome }} ({{ estado.sigla }})
+            </option>
+          </select>
+        </div>
+
+        <!-- Aviso sobre a data dos dados -->
+        <div class="data-info-box">
+          <div class="info-icon-small">📅</div>
+          <div class="info-text-small">
+            <strong>Dados de referência:</strong> População total baseada em dados do IBGE 2024. 
+            Top 5 municípios com dados populacionais estimados para 2023/2024.
+          </div>
+        </div>
+
+        <div class="alert alert-error" *ngIf="erro">{{ erro }}</div>
+
+        <div *ngIf="!loadingIbge && municipios.length > 0">
+          <!-- Estatísticas Resumidas -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon">🏙️</div>
+              <div class="stat-content">
+                <div class="stat-label">Total de Municípios</div>
+                <div class="stat-value">{{ formatarNumero(municipios.length) }}</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">👥</div>
+              <div class="stat-content">
+                <div class="stat-label">População Total</div>
+                <div class="stat-value">{{ formatarNumero(totalPopulacao) }}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Gráfico de Barras - Top 5 Municípios por População -->
+          <div class="chart-section">
+            <h4 class="chart-title">🏆 Top 5 Municípios Mais Populosos</h4>
+            <div class="bar-chart">
+              <div class="bar-item" *ngFor="let dado of topMunicipiosPorPopulacao; let i = index">
+                <div class="bar-label">
+                  <span class="bar-position">{{ i + 1 }}º</span>
+                  <span class="bar-name">{{ dado.municipio }}</span>
+                </div>
+                <div class="bar-container">
+                  <div 
+                    class="bar-fill" 
+                    [style.width]="getBarWidth(dado.populacao, topMunicipiosPorPopulacao[0].populacao)">
+                  </div>
+                </div>
+                <div class="bar-value">{{ formatarNumero(dado.populacao) }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="loading-container" *ngIf="loadingIbge">
+          <div class="spinner"></div>
+          <p>Carregando dados do IBGE...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEÇÃO DESPESAS -->
+    <div class="secao-panel" *ngIf="secaoAtiva === 'despesas'">
+      <div class="panel-section">
+        <h3 class="section-title">Análise de Despesas Federais</h3>
+        
+        <!-- Aviso sobre a data dos dados -->
+        <div class="data-info-box">
+          <div class="info-icon-small">📅</div>
+          <div class="info-text-small">
+            <strong>Dados de referência:</strong> Valores baseados no Orçamento Federal 2024. 
+            Dados aproximados para fins educacionais e demonstrativos.
+          </div>
+        </div>
+
+        <button class="load-button" (click)="carregarDespesas()" [disabled]="loadingDespesas">
+          {{ loadingDespesas ? 'Carregando...' : 'Carregar Dados de Despesas' }}
+        </button>
+
+        <div class="alert alert-error" *ngIf="erro">{{ erro }}</div>
+
+        <div *ngIf="!loadingDespesas && despesas.length > 0">
+          <!-- Total de Despesas -->
+          <div class="total-section">
+            <div class="total-card">
+              <div class="total-icon">💵</div>
+              <div class="total-content">
+                <div class="total-label">Total de Despesas (2024)</div>
+                <div class="total-value">{{ formatarMoeda(totalDespesas) }}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Gráfico de Despesas por Órgão -->
+          <div class="chart-section">
+            <h4 class="chart-title">🏛️ Despesas por Órgão</h4>
+            <div class="bar-chart">
+              <div class="bar-item" *ngFor="let despesa of despesas.slice(0, 5)">
+                <div class="bar-label">
+                  <span class="bar-name">{{ despesa.orgao }}</span>
+                </div>
+                <div class="bar-container">
+                  <div 
+                    class="bar-fill bar-fill-green" 
+                    [style.width]="getBarWidth(despesa.valor, despesas[0].valor)">
+                  </div>
+                </div>
+                <div class="bar-value">{{ formatarMoeda(despesa.valor) }}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Gráfico de Despesas por Mês -->
+          <div class="chart-section">
+            <h4 class="chart-title">📅 Despesas por Mês (2024)</h4>
+            <div class="line-chart">
+              <div class="line-item" *ngFor="let item of despesasPorMes">
+                <div class="line-label">{{ item.mes }}</div>
+                <div class="line-bar-container">
+                  <div 
+                    class="line-bar" 
+                    [style.height]="getBarWidth(item.valor, maxDespesaPorMes)">
+                  </div>
+                </div>
+                <div class="line-value">{{ formatarMoeda(item.valor) }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="loading-container" *ngIf="loadingDespesas">
+          <div class="spinner"></div>
+          <p>Carregando dados de despesas...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEÇÃO COMPARAÇÃO -->
+    <div class="secao-panel" *ngIf="secaoAtiva === 'comparacao'">
+      <div class="panel-section">
+        <h3 class="section-title">Comparação entre Estados</h3>
+        
+        <!-- Aviso sobre a funcionalidade -->
+        <div class="data-info-box">
+          <div class="info-icon-small">📊</div>
+          <div class="info-text-small">
+            <strong>Compare dados demográficos:</strong> Selecione até 3 estados diferentes e veja 
+            uma comparação lado a lado de população, municípios e principais cidades.
+          </div>
+        </div>
+
+        <!-- Seletor de Estados para Comparação -->
+        <div class="comparison-selector">
+          <div class="selector-group">
+            <label class="filter-label">Estado 1:</label>
+            <select class="filter-select" [(ngModel)]="estadoComparacao1" (change)="atualizarComparacao()">
+              <option value="">Selecione</option>
+              <option *ngFor="let estado of estados" [value]="estado.sigla">
+                {{ estado.nome }} ({{ estado.sigla }})
+              </option>
+            </select>
+          </div>
+
+          <div class="selector-group">
+            <label class="filter-label">Estado 2:</label>
+            <select class="filter-select" [(ngModel)]="estadoComparacao2" (change)="atualizarComparacao()">
+              <option value="">Selecione</option>
+              <option *ngFor="let estado of estados" [value]="estado.sigla">
+                {{ estado.nome }} ({{ estado.sigla }})
+              </option>
+            </select>
+          </div>
+
+          <div class="selector-group">
+            <label class="filter-label">Estado 3 (opcional):</label>
+            <select class="filter-select" [(ngModel)]="estadoComparacao3" (change)="atualizarComparacao()">
+              <option value="">Selecione</option>
+              <option *ngFor="let estado of estados" [value]="estado.sigla">
+                {{ estado.nome }} ({{ estado.sigla }})
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Tabela de Comparação -->
+        <div class="comparison-table-wrapper" *ngIf="estadoComparacao1 && estadoComparacao2">
+          <h4 class="chart-title">📋 Comparativo de População e Municípios</h4>
+          
+          <div class="comparison-table">
+            <!-- Cabeçalho -->
+            <div class="table-header">
+              <div class="table-cell header-cell">Indicador</div>
+              <div class="table-cell header-cell">{{ getNomeEstado(estadoComparacao1) }}</div>
+              <div class="table-cell header-cell">{{ getNomeEstado(estadoComparacao2) }}</div>
+              <div class="table-cell header-cell" *ngIf="estadoComparacao3">{{ getNomeEstado(estadoComparacao3) }}</div>
+            </div>
+
+            <!-- População Total -->
+            <div class="table-row">
+              <div class="table-cell label-cell">👥 População Total</div>
+              <div class="table-cell data-cell">{{ formatarNumero(getPopulacaoEstado(estadoComparacao1)) }}</div>
+              <div class="table-cell data-cell">{{ formatarNumero(getPopulacaoEstado(estadoComparacao2)) }}</div>
+              <div class="table-cell data-cell" *ngIf="estadoComparacao3">{{ formatarNumero(getPopulacaoEstado(estadoComparacao3)) }}</div>
+            </div>
+
+            <!-- Total de Municípios -->
+            <div class="table-row">
+              <div class="table-cell label-cell">🏙️ Total de Municípios</div>
+              <div class="table-cell data-cell">{{ getMunicipiosEstado(estadoComparacao1) }}</div>
+              <div class="table-cell data-cell">{{ getMunicipiosEstado(estadoComparacao2) }}</div>
+              <div class="table-cell data-cell" *ngIf="estadoComparacao3">{{ getMunicipiosEstado(estadoComparacao3) }}</div>
+            </div>
+
+            <!-- Maior Cidade -->
+            <div class="table-row">
+              <div class="table-cell label-cell">🏆 Maior Cidade</div>
+              <div class="table-cell data-cell">{{ getMaiorCidade(estadoComparacao1) }}</div>
+              <div class="table-cell data-cell">{{ getMaiorCidade(estadoComparacao2) }}</div>
+              <div class="table-cell data-cell" *ngIf="estadoComparacao3">{{ getMaiorCidade(estadoComparacao3) }}</div>
+            </div>
+
+            <!-- População da Maior Cidade -->
+            <div class="table-row">
+              <div class="table-cell label-cell">📊 Pop. Maior Cidade</div>
+              <div class="table-cell data-cell">{{ formatarNumero(getPopulacaoMaiorCidade(estadoComparacao1)) }}</div>
+              <div class="table-cell data-cell">{{ formatarNumero(getPopulacaoMaiorCidade(estadoComparacao2)) }}</div>
+              <div class="table-cell data-cell" *ngIf="estadoComparacao3">{{ formatarNumero(getPopulacaoMaiorCidade(estadoComparacao3)) }}</div>
+            </div>
+
+            <!-- Região -->
+            <div class="table-row">
+              <div class="table-cell label-cell">🗺️ Região</div>
+              <div class="table-cell data-cell">{{ getRegiaoEstado(estadoComparacao1) }}</div>
+              <div class="table-cell data-cell">{{ getRegiaoEstado(estadoComparacao2) }}</div>
+              <div class="table-cell data-cell" *ngIf="estadoComparacao3">{{ getRegiaoEstado(estadoComparacao3) }}</div>
+            </div>
+
+            <!-- Área Territorial -->
+            <div class="table-row">
+              <div class="table-cell label-cell">📐 Área Territorial</div>
+              <div class="table-cell data-cell">{{ formatarNumero(getAreaEstado(estadoComparacao1)) }} km²</div>
+              <div class="table-cell data-cell">{{ formatarNumero(getAreaEstado(estadoComparacao2)) }} km²</div>
+              <div class="table-cell data-cell" *ngIf="estadoComparacao3">{{ formatarNumero(getAreaEstado(estadoComparacao3)) }} km²</div>
+            </div>
+
+            <!-- Densidade Demográfica -->
+            <div class="table-row">
+              <div class="table-cell label-cell">🔢 Densidade Demográfica</div>
+              <div class="table-cell data-cell">{{ getDensidadeDemografica(estadoComparacao1).toFixed(2) }} hab/km²</div>
+              <div class="table-cell data-cell">{{ getDensidadeDemografica(estadoComparacao2).toFixed(2) }} hab/km²</div>
+              <div class="table-cell data-cell" *ngIf="estadoComparacao3">{{ getDensidadeDemografica(estadoComparacao3).toFixed(2) }} hab/km²</div>
+            </div>
+
+            <!-- PIB Estadual -->
+            <div class="table-row">
+              <div class="table-cell label-cell">💰 PIB Estadual</div>
+              <div class="table-cell data-cell">R$ {{ getPibEstado(estadoComparacao1).toFixed(1) }} bi</div>
+              <div class="table-cell data-cell">R$ {{ getPibEstado(estadoComparacao2).toFixed(1) }} bi</div>
+              <div class="table-cell data-cell" *ngIf="estadoComparacao3">R$ {{ getPibEstado(estadoComparacao3).toFixed(1) }} bi</div>
+            </div>
+
+            <!-- PIB Per Capita -->
+            <div class="table-row">
+              <div class="table-cell label-cell">💵 PIB Per Capita</div>
+              <div class="table-cell data-cell">{{ formatarMoeda(getPibPerCapita(estadoComparacao1)) }}</div>
+              <div class="table-cell data-cell">{{ formatarMoeda(getPibPerCapita(estadoComparacao2)) }}</div>
+              <div class="table-cell data-cell" *ngIf="estadoComparacao3">{{ formatarMoeda(getPibPerCapita(estadoComparacao3)) }}</div>
+            </div>
+          </div>
+
+          <!-- Gráfico de Barras Comparativo -->
+          <div class="chart-section comparison-chart">
+            <h4 class="chart-title">📊 Comparação Visual de População</h4>
+            <div class="bar-chart-horizontal">
+              <div class="bar-item-horizontal">
+                <div class="bar-label-horizontal">{{ getNomeEstado(estadoComparacao1) }}</div>
+                <div class="bar-container-horizontal">
+                  <div 
+                    class="bar-fill-horizontal bar-color-1" 
+                    [style.width]="getBarWidthComparacao(estadoComparacao1)">
+                  </div>
+                </div>
+                <div class="bar-value-horizontal">{{ formatarNumero(getPopulacaoEstado(estadoComparacao1)) }}</div>
+              </div>
+
+              <div class="bar-item-horizontal">
+                <div class="bar-label-horizontal">{{ getNomeEstado(estadoComparacao2) }}</div>
+                <div class="bar-container-horizontal">
+                  <div 
+                    class="bar-fill-horizontal bar-color-2" 
+                    [style.width]="getBarWidthComparacao(estadoComparacao2)">
+                  </div>
+                </div>
+                <div class="bar-value-horizontal">{{ formatarNumero(getPopulacaoEstado(estadoComparacao2)) }}</div>
+              </div>
+
+              <div class="bar-item-horizontal" *ngIf="estadoComparacao3">
+                <div class="bar-label-horizontal">{{ getNomeEstado(estadoComparacao3) }}</div>
+                <div class="bar-container-horizontal">
+                  <div 
+                    class="bar-fill-horizontal bar-color-3" 
+                    [style.width]="getBarWidthComparacao(estadoComparacao3)">
+                  </div>
+                </div>
+                <div class="bar-value-horizontal">{{ formatarNumero(getPopulacaoEstado(estadoComparacao3)) }}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Gráfico de Área Territorial -->
+          <div class="chart-section comparison-chart">
+            <h4 class="chart-title">📐 Comparação de Área Territorial</h4>
+            <div class="bar-chart-horizontal">
+              <div class="bar-item-horizontal">
+                <div class="bar-label-horizontal">{{ getNomeEstado(estadoComparacao1) }}</div>
+                <div class="bar-container-horizontal">
+                  <div 
+                    class="bar-fill-horizontal bar-color-1" 
+                    [style.width]="getBarWidthArea(estadoComparacao1)">
+                  </div>
+                </div>
+                <div class="bar-value-horizontal">{{ formatarNumero(getAreaEstado(estadoComparacao1)) }} km²</div>
+              </div>
+
+              <div class="bar-item-horizontal">
+                <div class="bar-label-horizontal">{{ getNomeEstado(estadoComparacao2) }}</div>
+                <div class="bar-container-horizontal">
+                  <div 
+                    class="bar-fill-horizontal bar-color-2" 
+                    [style.width]="getBarWidthArea(estadoComparacao2)">
+                  </div>
+                </div>
+                <div class="bar-value-horizontal">{{ formatarNumero(getAreaEstado(estadoComparacao2)) }} km²</div>
+              </div>
+
+              <div class="bar-item-horizontal" *ngIf="estadoComparacao3">
+                <div class="bar-label-horizontal">{{ getNomeEstado(estadoComparacao3) }}</div>
+                <div class="bar-container-horizontal">
+                  <div 
+                    class="bar-fill-horizontal bar-color-3" 
+                    [style.width]="getBarWidthArea(estadoComparacao3)">
+                  </div>
+                </div>
+                <div class="bar-value-horizontal">{{ formatarNumero(getAreaEstado(estadoComparacao3)) }} km²</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Gráfico de PIB -->
+          <div class="chart-section comparison-chart">
+            <h4 class="chart-title">💰 Comparação de PIB Estadual</h4>
+            <div class="bar-chart-horizontal">
+              <div class="bar-item-horizontal">
+                <div class="bar-label-horizontal">{{ getNomeEstado(estadoComparacao1) }}</div>
+                <div class="bar-container-horizontal">
+                  <div 
+                    class="bar-fill-horizontal bar-color-1" 
+                    [style.width]="getBarWidthPib(estadoComparacao1)">
+                  </div>
+                </div>
+                <div class="bar-value-horizontal">R$ {{ getPibEstado(estadoComparacao1).toFixed(1) }} bi</div>
+              </div>
+
+              <div class="bar-item-horizontal">
+                <div class="bar-label-horizontal">{{ getNomeEstado(estadoComparacao2) }}</div>
+                <div class="bar-container-horizontal">
+                  <div 
+                    class="bar-fill-horizontal bar-color-2" 
+                    [style.width]="getBarWidthPib(estadoComparacao2)">
+                  </div>
+                </div>
+                <div class="bar-value-horizontal">R$ {{ getPibEstado(estadoComparacao2).toFixed(1) }} bi</div>
+              </div>
+
+              <div class="bar-item-horizontal" *ngIf="estadoComparacao3">
+                <div class="bar-label-horizontal">{{ getNomeEstado(estadoComparacao3) }}</div>
+                <div class="bar-container-horizontal">
+                  <div 
+                    class="bar-fill-horizontal bar-color-3" 
+                    [style.width]="getBarWidthPib(estadoComparacao3)">
+                  </div>
+                </div>
+                <div class="bar-value-horizontal">R$ {{ getPibEstado(estadoComparacao3).toFixed(1) }} bi</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mensagem quando nenhum estado selecionado -->
+        <div class="empty-state" *ngIf="!estadoComparacao1 || !estadoComparacao2">
+          <div class="empty-icon">📊</div>
+          <h4 class="empty-title">Selecione estados para comparar</h4>
+          <p class="empty-text">
+            Escolha pelo menos 2 estados nos seletores acima para visualizar uma comparação 
+            detalhada de dados demográficos.
+          </p>
+        </div>
+
+        <!-- Informações Adicionais -->
+        <div class="info-section">
+          <h4 class="info-title">ℹ️ Sobre as Comparações</h4>
+          <div class="info-content">
+            <p><strong>Dados Utilizados:</strong></p>
+            <ul class="info-list">
+              <li><strong>População Total:</strong> Estimativa IBGE 2024 para cada estado</li>
+              <li><strong>Total de Municípios:</strong> Quantidade de cidades em cada estado (IBGE)</li>
+              <li><strong>Maior Cidade:</strong> Município mais populoso de cada estado</li>
+              <li><strong>Região:</strong> Região geográfica do Brasil (Norte, Nordeste, Centro-Oeste, Sudeste, Sul)</li>
+              <li><strong>Área Territorial:</strong> Extensão territorial oficial em km² (IBGE)</li>
+              <li><strong>Densidade Demográfica:</strong> Habitantes por km² (população ÷ área)</li>
+              <li><strong>PIB Estadual:</strong> Produto Interno Bruto estimado para 2024 em bilhões de R$</li>
+              <li><strong>PIB Per Capita:</strong> PIB dividido pela população (em reais por habitante)</li>
+            </ul>
+            
+            <p><strong>Como Usar:</strong></p>
+            <ul class="info-list">
+              <li>Selecione 2 ou 3 estados para comparação lado a lado</li>
+              <li>Visualize dados demográficos, geográficos e econômicos na tabela</li>
+              <li>Analise os gráficos de barras para comparação visual</li>
+              <li>Compare população, área territorial e PIB entre estados</li>
+              <li>Troque os estados quantas vezes quiser para diferentes análises</li>
+            </ul>
+
+            <p><strong>Insights Interessantes:</strong></p>
+            <ul class="info-list">
+              <li>Compare <strong>Distrito Federal</strong> (menor área) com <strong>Amazonas</strong> (maior área)</li>
+              <li>Veja a diferença de densidade entre <strong>Rio de Janeiro</strong> (alta) e <strong>Roraima</strong> (baixa)</li>
+              <li>Analise o PIB de <strong>São Paulo</strong> versus outros estados</li>
+              <li>Compare estados da mesma região ou de regiões diferentes</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
