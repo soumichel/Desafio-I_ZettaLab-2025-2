@@ -1,0 +1,81 @@
+// Cores da Bandeira do Brasil
+$footer-bg: #002776; // Azul
+$footer-text: #ffffff;
+
+// Footer base
+.footer {
+  width: 100%;
+  background-color: $footer-bg;
+  color: $footer-text;
+  padding: 1.5rem 0;
+  flex-shrink: 0;
+}
+
+.footer-container {
+  width: 100%;
+  padding: 0 1rem;
+  margin: 0 auto;
+}
+
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.footer-text {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.footer-left,
+.footer-right {
+  text-align: center;
+}
+
+// Breakpoint X-Small (< 576px) - mantém layout vertical centralizado
+@media (max-width: 575.98px) {
+  .footer-text {
+    font-size: 0.8rem;
+  }
+}
+
+// Breakpoint Medium (≥ 768px) - layout horizontal
+@media (min-width: 768px) {
+  .footer-container {
+    padding: 0 2rem;
+  }
+
+  .footer-content {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0;
+  }
+
+  .footer-text {
+    font-size: 0.9rem;
+  }
+
+  .footer-left {
+    text-align: left;
+  }
+
+  .footer-right {
+    text-align: right;
+  }
+}
+
+// Breakpoint Large (≥ 992px) - container com largura máxima
+@media (min-width: 992px) {
+  .footer-container {
+    max-width: 1200px;
+    padding: 0 2rem;
+  }
+
+  .footer-text {
+    font-size: 1rem;
+  }
+}

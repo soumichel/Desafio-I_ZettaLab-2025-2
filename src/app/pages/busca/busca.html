@@ -1,0 +1,347 @@
+<div class="busca-container">
+  <!-- Header -->
+  <div class="busca-header">
+    <h2 class="busca-title">Busca de Dados Públicos</h2>
+    <p class="busca-subtitle">Pesquise informações sobre CEP, CNPJ, municípios, despesas e contratos públicos</p>
+  </div>
+
+  <!-- Navegação por Abas (Manual) -->
+  <div class="tabs-navigation">
+    <button 
+      class="tab-button"
+      [class.tab-active]="abaAtiva === 'cep'"
+      (click)="selecionarAba('cep')">
+      📍 CEP
+    </button>
+    <button 
+      class="tab-button"
+      [class.tab-active]="abaAtiva === 'cnpj'"
+      (click)="selecionarAba('cnpj')">
+      🏢 CNPJ
+    </button>
+    <button 
+      class="tab-button"
+      [class.tab-active]="abaAtiva === 'municipio'"
+      (click)="selecionarAba('municipio')">
+      🏙️ Municípios
+    </button>
+    <button 
+      class="tab-button"
+      [class.tab-active]="abaAtiva === 'despesas'"
+      (click)="selecionarAba('despesas')">
+      🏛️ Órgãos
+    </button>
+    <button 
+      class="tab-button"
+      [class.tab-active]="abaAtiva === 'contratos'"
+      (click)="selecionarAba('contratos')">
+      📝 Licitações
+    </button>
+  </div>
+
+  <!-- Conteúdo das Abas -->
+  <div class="tabs-content">
+    
+    <!-- ABA CEP -->
+    <div class="tab-panel" *ngIf="abaAtiva === 'cep'">
+      <div class="search-section">
+        <h3 class="panel-title">Consultar CEP</h3>
+        <p class="panel-description">Digite o CEP para consultar endereço completo</p>
+        
+        <div class="info-box-small">
+          <span class="info-icon-small">ℹ️</span>
+          <span class="info-text-small">Insira apenas números, sem traços ou pontos (ex: 01310100)</span>
+        </div>
+        
+        <div class="search-form">
+          <input 
+            type="text" 
+            class="search-input"
+            [(ngModel)]="cepBusca"
+            placeholder="Digite o CEP (ex: 01310100)"
+            maxlength="8"
+            (keyup.enter)="buscarCep()">
+          <button class="search-button" (click)="buscarCep()" [disabled]="loading">
+            {{ loading ? 'Buscando...' : 'Buscar' }}
+          </button>
+        </div>
+
+        <div class="alert alert-error" *ngIf="erro">{{ erro }}</div>
+
+        <div class="result-card" *ngIf="resultadoCep">
+          <h4 class="result-title">📍 Endereço Encontrado</h4>
+          <div class="result-grid">
+            <div class="result-item">
+              <strong>CEP:</strong>
+              <span>{{ formatarCep(resultadoCep.cep) }}</span>
+            </div>
+            <div class="result-item">
+              <strong>Logradouro:</strong>
+              <span>{{ resultadoCep.street }}</span>
+            </div>
+            <div class="result-item">
+              <strong>Bairro:</strong>
+              <span>{{ resultadoCep.neighborhood }}</span>
+            </div>
+            <div class="result-item">
+              <strong>Cidade:</strong>
+              <span>{{ resultadoCep.city }} - {{ resultadoCep.state }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABA CNPJ -->
+    <div class="tab-panel" *ngIf="abaAtiva === 'cnpj'">
+      <div class="search-section">
+        <h3 class="panel-title">Consultar CNPJ</h3>
+        <p class="panel-description">Digite o CNPJ para consultar dados da empresa</p>
+        
+        <div class="info-box-small">
+          <span class="info-icon-small">ℹ️</span>
+          <span class="info-text-small">Insira apenas números, sem pontos, barras ou traços (ex: 00000000000191)</span>
+        </div>
+        
+        <div class="search-form">
+          <input 
+            type="text" 
+            class="search-input"
+            [(ngModel)]="cnpjBusca"
+            placeholder="Digite o CNPJ (ex: 00000000000191)"
+            maxlength="14"
+            (keyup.enter)="buscarCnpj()">
+          <button class="search-button" (click)="buscarCnpj()" [disabled]="loading">
+            {{ loading ? 'Buscando...' : 'Buscar' }}
+          </button>
+        </div>
+
+        <div class="alert alert-error" *ngIf="erro">{{ erro }}</div>
+
+        <div class="result-card" *ngIf="resultadoCnpj">
+          <h4 class="result-title">🏢 Empresa Encontrada</h4>
+          <div class="result-grid">
+            <div class="result-item">
+              <strong>CNPJ:</strong>
+              <span>{{ formatarCnpj(resultadoCnpj.cnpj) }}</span>
+            </div>
+            <div class="result-item">
+              <strong>Razão Social:</strong>
+              <span>{{ resultadoCnpj.razao_social }}</span>
+            </div>
+            <div class="result-item">
+              <strong>Nome Fantasia:</strong>
+              <span>{{ resultadoCnpj.nome_fantasia || 'Não informado' }}</span>
+            </div>
+            <div class="result-item">
+              <strong>Situação:</strong>
+              <span>{{ resultadoCnpj.descricao_situacao_cadastral }}</span>
+            </div>
+            <div class="result-item full-width">
+              <strong>Endereço:</strong>
+              <span>{{ resultadoCnpj.logradouro }}, {{ resultadoCnpj.numero }} - {{ resultadoCnpj.bairro }}, {{ resultadoCnpj.municipio }} - {{ resultadoCnpj.uf }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABA MUNICÍPIOS -->
+    <div class="tab-panel" *ngIf="abaAtiva === 'municipio'">
+      <div class="search-section">
+        <h3 class="panel-title">Consultar Municípios</h3>
+        <p class="panel-description">Selecione um estado para listar todos os municípios</p>
+        
+        <div class="search-form">
+          <select class="search-select" [(ngModel)]="estadoSelecionado" (change)="buscarMunicipios()">
+            <option value="">Selecione um estado</option>
+            <option *ngFor="let estado of listaEstados" [value]="estado.sigla">
+              {{ estado.nome }} ({{ estado.sigla }})
+            </option>
+          </select>
+        </div>
+
+        <div class="alert alert-error" *ngIf="erro">{{ erro }}</div>
+
+        <div class="municipios-list" *ngIf="listaMunicipios.length > 0">
+          <h4 class="result-title">🏙️ Municípios de {{ estadoSelecionado }} ({{ listaMunicipios.length }})</h4>
+          <div class="municipios-grid">
+            <div class="municipio-item" *ngFor="let municipio of listaMunicipios">
+              {{ municipio.nome }}
+            </div>
+          </div>
+        </div>
+
+        <div class="loading-container" *ngIf="loading">
+          <div class="spinner"></div>
+          <p>Carregando municípios...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABA DESPESAS -->
+    <div class="tab-panel" *ngIf="abaAtiva === 'despesas'">
+      <div class="search-section">
+        <h3 class="panel-title">Órgãos Públicos Federais</h3>
+        <p class="panel-description">Consulte órgãos do SIAFI - Sistema Integrado de Administração Financeira (Portal da Transparência)</p>
+        
+        <!-- Explicação sobre CORS -->
+        <div class="info-box">
+          <div class="info-icon">ℹ️</div>
+          <div class="info-content">
+            <h4 class="info-title">Por que não consigo ver os dados aqui?</h4>
+            <p class="info-text">
+              A <strong>API do Portal da Transparência</strong> não permite acesso direto de navegadores web devido a uma política de segurança chamada <strong>CORS (Cross-Origin Resource Sharing)</strong>.
+            </p>
+            <p class="info-text">
+              Isso acontece porque o servidor da API não envia o header <code>Access-Control-Allow-Origin</code>, que é necessário para que navegadores permitam requisições de outros domínios.
+            </p>
+            <h5 class="info-subtitle">📚 O que é CORS?</h5>
+            <p class="info-text">
+              CORS é uma medida de segurança dos navegadores que impede que sites maliciosos façam requisições não autorizadas para outros servidores em nome do usuário. 
+              Apenas o servidor da API pode permitir esse acesso, e o Portal da Transparência optou por restringir chamadas diretas via JavaScript.
+            </p>
+            <h5 class="info-subtitle">✅ Como acessar os dados?</h5>
+            <ul class="info-list">
+              <li><strong>Opção 1:</strong> Acessar diretamente o site oficial do Portal da Transparência</li>
+              <li><strong>Opção 2:</strong> Fazer download dos dados públicos em CSV/JSON</li>
+              <li><strong>Opção 3:</strong> Usar um servidor intermediário (backend) que não tenha restrições de CORS</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Botões de acesso direto -->
+        <div class="action-buttons">
+          <button class="action-button primary" (click)="abrirPortalTransparencia('orgaos')">
+            🔗 Acessar Órgãos no Portal da Transparência
+          </button>
+          <button class="action-button secondary" (click)="abrirPortalTransparencia('downloads')">
+            📥 Baixar Dados Abertos (CSV/JSON)
+          </button>
+        </div>
+        
+        <!-- Tentativa de busca (vai falhar por CORS) -->
+        <div class="divider">
+          <span>ou tente buscar mesmo assim</span>
+        </div>
+
+        <button class="search-button full-width" (click)="buscarDespesas()" [disabled]="loading">
+          {{ loading ? 'Tentando...' : '🔍 Tentar Buscar API (não funcionará)' }}
+        </button>
+
+        <div class="alert alert-error" *ngIf="erro">{{ erro }}</div>
+
+        <div class="data-list" *ngIf="listaDespesas.length > 0">
+          <h4 class="result-title">🏛️ Órgãos SIAFI ({{ listaDespesas.length }})</h4>
+          <div class="data-table">
+            <div class="data-row" *ngFor="let orgao of listaDespesas">
+              <div class="data-cell">
+                <strong>Código:</strong> {{ orgao.codigo || orgao.codigoSIAFI || 'N/A' }}
+              </div>
+              <div class="data-cell">
+                <strong>Nome:</strong> {{ orgao.nome || 'Não informado' }}
+              </div>
+              <div class="data-cell">
+                <strong>Sigla:</strong> {{ orgao.sigla || 'N/A' }}
+              </div>
+              <div class="data-cell" *ngIf="orgao.orgaoSuperior || orgao.naturezaJuridica">
+                <strong>Órgão Superior:</strong> {{ orgao.orgaoSuperior || orgao.naturezaJuridica || 'N/A' }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="loading-container" *ngIf="loading">
+          <div class="spinner"></div>
+          <p>Carregando órgãos públicos...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABA CONTRATOS -->
+    <div class="tab-panel" *ngIf="abaAtiva === 'contratos'">
+      <div class="search-section">
+        <h3 class="panel-title">Licitações Públicas</h3>
+        <p class="panel-description">Consulte licitações do governo federal (Portal da Transparência)</p>
+        
+        <!-- Explicação sobre CORS -->
+        <div class="info-box">
+          <div class="info-icon">ℹ️</div>
+          <div class="info-content">
+            <h4 class="info-title">Por que não consigo ver os dados aqui?</h4>
+            <p class="info-text">
+              A <strong>API do Portal da Transparência</strong> não permite acesso direto de navegadores web devido a uma política de segurança chamada <strong>CORS (Cross-Origin Resource Sharing)</strong>.
+            </p>
+            <p class="info-text">
+              Isso acontece porque o servidor da API não envia o header <code>Access-Control-Allow-Origin</code>, que é necessário para que navegadores permitam requisições de outros domínios.
+            </p>
+            <h5 class="info-subtitle">📚 O que é CORS?</h5>
+            <p class="info-text">
+              CORS é uma medida de segurança dos navegadores que impede que sites maliciosos façam requisições não autorizadas para outros servidores em nome do usuário. 
+              Apenas o servidor da API pode permitir esse acesso, e o Portal da Transparência optou por restringir chamadas diretas via JavaScript.
+            </p>
+            <h5 class="info-subtitle">✅ Como acessar os dados?</h5>
+            <ul class="info-list">
+              <li><strong>Opção 1:</strong> Acessar diretamente o site oficial do Portal da Transparência</li>
+              <li><strong>Opção 2:</strong> Fazer download dos dados públicos em CSV/JSON</li>
+              <li><strong>Opção 3:</strong> Usar um servidor intermediário (backend) que não tenha restrições de CORS</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Botões de acesso direto -->
+        <div class="action-buttons">
+          <button class="action-button primary" (click)="abrirPortalTransparencia('licitacoes')">
+            🔗 Acessar Licitações no Portal da Transparência
+          </button>
+          <button class="action-button secondary" (click)="abrirPortalTransparencia('downloads')">
+            📥 Baixar Dados Abertos (CSV/JSON)
+          </button>
+        </div>
+        
+        <!-- Tentativa de busca (vai falhar por CORS) -->
+        <div class="divider">
+          <span>ou tente buscar mesmo assim</span>
+        </div>
+
+        <button class="search-button full-width" (click)="buscarContratos()" [disabled]="loading">
+          {{ loading ? 'Tentando...' : '🔍 Tentar Buscar API (não funcionará)' }}
+        </button>
+
+        <div class="alert alert-error" *ngIf="erro">{{ erro }}</div>
+
+        <div class="data-list" *ngIf="listaContratos.length > 0">
+          <h4 class="result-title">� Licitações Encontradas ({{ listaContratos.length }})</h4>
+          <div class="data-table">
+            <div class="data-row" *ngFor="let licitacao of listaContratos">
+              <div class="data-cell" *ngIf="licitacao.numero || licitacao.numeroLicitacao">
+                <strong>Número:</strong> {{ licitacao.numero || licitacao.numeroLicitacao || 'N/A' }}
+              </div>
+              <div class="data-cell">
+                <strong>Objeto:</strong> {{ licitacao.objeto || licitacao.objetoLicitacao || 'Não informado' }}
+              </div>
+              <div class="data-cell" *ngIf="licitacao.modalidade || licitacao.modalidadeCompra">
+                <strong>Modalidade:</strong> {{ licitacao.modalidade || licitacao.modalidadeCompra || 'N/A' }}
+              </div>
+              <div class="data-cell" *ngIf="licitacao.situacao || licitacao.situacaoLicitacao">
+                <strong>Situação:</strong> {{ licitacao.situacao || licitacao.situacaoLicitacao || 'N/A' }}
+              </div>
+              <div class="data-cell" *ngIf="licitacao.orgao || licitacao.nomeOrgao">
+                <strong>Órgão:</strong> {{ licitacao.orgao || licitacao.nomeOrgao || 'N/A' }}
+              </div>
+              <div class="data-cell" *ngIf="licitacao.valor || licitacao.valorLicitado">
+                <strong>Valor:</strong> {{ formatarMoeda(licitacao.valor || licitacao.valorLicitado || 0) }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="loading-container" *ngIf="loading">
+          <div class="spinner"></div>
+          <p>Carregando licitações...</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

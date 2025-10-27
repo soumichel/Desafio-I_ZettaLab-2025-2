@@ -56,6 +56,7 @@ Thumbs.db
 
 # Environment files
 /.env
+/src/environments/environment.ts
 
 # Angular CLI and build artefacts
 /.angular-cli.json
