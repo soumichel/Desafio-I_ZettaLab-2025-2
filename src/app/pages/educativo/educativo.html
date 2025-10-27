@@ -1,0 +1,304 @@
+<div class="educativo-container">
+  <!-- Header -->
+  <div class="educativo-header">
+    <h2 class="educativo-title">Conteúdo Educativo</h2>
+    <p class="educativo-subtitle">Aprenda sobre transparência pública, dados abertos e cidadania</p>
+  </div>
+
+  <!-- Navegação por Categorias -->
+  <div class="categorias-navigation">
+    <button 
+      class="categoria-button"
+      [class.categoria-active]="categoriaAtiva === 'cidadania'"
+      (click)="selecionarCategoria('cidadania')">
+      👨‍🎓 Cidadania
+    </button>
+    <button 
+      class="categoria-button"
+      [class.categoria-active]="categoriaAtiva === 'apis'"
+      (click)="selecionarCategoria('apis')">
+      🔌 APIs Públicas
+    </button>
+    <button 
+      class="categoria-button"
+      [class.categoria-active]="categoriaAtiva === 'transparencia'"
+      (click)="selecionarCategoria('transparencia')">
+      🏛️ Transparência
+    </button>
+    <button 
+      class="categoria-button"
+      [class.categoria-active]="categoriaAtiva === 'pratica'"
+      (click)="selecionarCategoria('pratica')">
+      🎯 Prática
+    </button>
+  </div>
+
+  <!-- Conteúdo das Categorias -->
+  <div class="categorias-content">
+
+    <!-- CIDADANIA -->
+    <div class="categoria-panel" *ngIf="categoriaAtiva === 'cidadania'">
+      <div class="intro-section">
+        <h3 class="intro-title">💡 Educação para a Cidadania</h3>
+        <p class="intro-text">
+          A cidadania ativa depende do acesso à informação e da capacidade de compreender e utilizar dados públicos 
+          para participar efetivamente da vida democrática do país.
+        </p>
+      </div>
+
+      <div class="conteudos-grid">
+        <div class="conteudo-card" *ngFor="let conteudo of conteudosCidadania">
+          <div class="conteudo-header">
+            <div class="conteudo-icone">{{ conteudo.icone }}</div>
+            <div class="conteudo-info">
+              <span class="conteudo-categoria">{{ conteudo.categoria }}</span>
+              <h4 class="conteudo-titulo">{{ conteudo.titulo }}</h4>
+            </div>
+          </div>
+          <p class="conteudo-descricao">{{ conteudo.descricao }}</p>
+          <div class="conteudo-exemplos">
+            <strong class="exemplos-titulo">Exemplos:</strong>
+            <ul class="exemplos-lista">
+              <li *ngFor="let exemplo of conteudo.exemplos">{{ exemplo }}</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- APIs PÚBLICAS -->
+    <div class="categoria-panel" *ngIf="categoriaAtiva === 'apis'">
+      <div class="intro-section">
+        <h3 class="intro-title">🔌 Entendendo as APIs Públicas</h3>
+        <p class="intro-text">
+          APIs (Application Programming Interfaces) são interfaces que permitem que aplicações acessem dados de forma 
+          estruturada e automatizada. O governo brasileiro disponibiliza diversas APIs com informações públicas.
+        </p>
+      </div>
+
+      <div class="conteudos-grid">
+        <div class="conteudo-card" *ngFor="let conteudo of conteudosApis">
+          <div class="conteudo-header">
+            <div class="conteudo-icone">{{ conteudo.icone }}</div>
+            <div class="conteudo-info">
+              <span class="conteudo-categoria">{{ conteudo.categoria }}</span>
+              <h4 class="conteudo-titulo">{{ conteudo.titulo }}</h4>
+            </div>
+          </div>
+          <p class="conteudo-descricao">{{ conteudo.descricao }}</p>
+          <div class="conteudo-exemplos">
+            <strong class="exemplos-titulo">Dados Disponíveis:</strong>
+            <ul class="exemplos-lista">
+              <li *ngFor="let exemplo of conteudo.exemplos">{{ exemplo }}</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="destaque-section">
+        <h4 class="destaque-titulo">💡 Por que APIs são importantes?</h4>
+        <div class="destaque-grid">
+          <div class="destaque-item">
+            <div class="destaque-icone">⚡</div>
+            <div class="destaque-texto">
+              <strong>Acesso Rápido</strong>
+              <p>Dados atualizados em tempo real</p>
+            </div>
+          </div>
+          <div class="destaque-item">
+            <div class="destaque-icone">🔄</div>
+            <div class="destaque-texto">
+              <strong>Automatização</strong>
+              <p>Integração com sistemas e aplicações</p>
+            </div>
+          </div>
+          <div class="destaque-item">
+            <div class="destaque-icone">📊</div>
+            <div class="destaque-texto">
+              <strong>Análise de Dados</strong>
+              <p>Facilita estudos e pesquisas</p>
+            </div>
+          </div>
+          <div class="destaque-item">
+            <div class="destaque-icone">🆓</div>
+            <div class="destaque-texto">
+              <strong>Gratuito</strong>
+              <p>Acesso livre para todos os cidadãos</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TRANSPARÊNCIA -->
+    <div class="categoria-panel" *ngIf="categoriaAtiva === 'transparencia'">
+      <div class="intro-section">
+        <h3 class="intro-title">🏛️ Transparência Pública no Brasil</h3>
+        <p class="intro-text">
+          A transparência é um princípio fundamental da administração pública brasileira, garantindo que os cidadãos 
+          tenham acesso às informações sobre como os recursos públicos são utilizados.
+        </p>
+      </div>
+
+      <div class="conteudos-grid">
+        <div class="conteudo-card" *ngFor="let conteudo of conteudosTransparencia">
+          <div class="conteudo-header">
+            <div class="conteudo-icone">{{ conteudo.icone }}</div>
+            <div class="conteudo-info">
+              <span class="conteudo-categoria">{{ conteudo.categoria }}</span>
+              <h4 class="conteudo-titulo">{{ conteudo.titulo }}</h4>
+            </div>
+          </div>
+          <p class="conteudo-descricao">{{ conteudo.descricao }}</p>
+          <div class="conteudo-exemplos">
+            <strong class="exemplos-titulo">Principais Aspectos:</strong>
+            <ul class="exemplos-lista">
+              <li *ngFor="let exemplo of conteudo.exemplos">{{ exemplo }}</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-section">
+        <h4 class="timeline-title">📅 Marcos da Transparência no Brasil</h4>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-date">2004</div>
+            <div class="timeline-content">
+              <strong>Portal da Transparência</strong>
+              <p>Lançamento do portal federal</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-date">2009</div>
+            <div class="timeline-content">
+              <strong>Lei Complementar 131</strong>
+              <p>Transparência em tempo real</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-date">2011</div>
+            <div class="timeline-content">
+              <strong>Lei de Acesso à Informação</strong>
+              <p>LAI - Marco legal da transparência</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-date">2016</div>
+            <div class="timeline-content">
+              <strong>Portal de Dados Abertos</strong>
+              <p>Dados governamentais estruturados</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRÁTICA -->
+    <div class="categoria-panel" *ngIf="categoriaAtiva === 'pratica'">
+      <div class="intro-section">
+        <h3 class="intro-title">🎯 Exercícios Práticos</h3>
+        <p class="intro-text">
+          Teste seus conhecimentos sobre transparência pública, dados abertos e APIs governamentais através de exercícios interativos.
+        </p>
+      </div>
+
+      <!-- Notícias IBGE -->
+      <div class="pratica-section" *ngIf="noticiasIbge.length > 0">
+        <h4 class="pratica-titulo">📰 Últimas Notícias do IBGE</h4>
+        <div class="noticias-list">
+          <div class="noticia-item" *ngFor="let noticia of noticiasIbge">
+            <h5 class="noticia-titulo">{{ noticia.titulo }}</h5>
+            <p class="noticia-intro">{{ noticia.introducao }}</p>
+            <a [href]="noticia.link" target="_blank" class="noticia-link">Ler mais →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quiz Interativo -->
+      <div class="pratica-section">
+        <h4 class="pratica-titulo">🎓 Quiz: Teste seus Conhecimentos</h4>
+        
+        <div class="quiz-container" *ngIf="!quizCompleto">
+          <div class="quiz-progresso">
+            Pergunta {{ quizAtual + 1 }} de {{ perguntas.length }}
+          </div>
+
+          <div class="quiz-pergunta">
+            <h5 class="pergunta-texto">{{ perguntas[quizAtual].pergunta }}</h5>
+            
+            <div class="opcoes-lista">
+              <button 
+                class="opcao-button"
+                *ngFor="let opcao of perguntas[quizAtual].opcoes; let i = index"
+                [class.opcao-selecionada]="respostasSelecionadas[quizAtual] === i"
+                (click)="selecionarResposta(quizAtual, i)">
+                {{ opcao }}
+              </button>
+            </div>
+          </div>
+
+          <div class="quiz-navegacao">
+            <button 
+              class="quiz-nav-button"
+              (click)="perguntaAnterior()"
+              [disabled]="quizAtual === 0">
+              ← Anterior
+            </button>
+            
+            <button 
+              class="quiz-nav-button quiz-primary"
+              *ngIf="quizAtual < perguntas.length - 1"
+              (click)="proximaPergunta()"
+              [disabled]="respostasSelecionadas[quizAtual] === undefined">
+              Próxima →
+            </button>
+            
+            <button 
+              class="quiz-nav-button quiz-success"
+              *ngIf="quizAtual === perguntas.length - 1"
+              (click)="finalizarQuiz()"
+              [disabled]="respostasSelecionadas[quizAtual] === undefined">
+              Finalizar ✓
+            </button>
+          </div>
+        </div>
+
+        <div class="quiz-resultado" *ngIf="quizCompleto">
+          <div class="resultado-header">
+            <div class="resultado-icone">
+              {{ pontuacao === perguntas.length ? '🏆' : pontuacao >= perguntas.length / 2 ? '👍' : '📚' }}
+            </div>
+            <h5 class="resultado-titulo-quiz">
+              {{ pontuacao === perguntas.length ? 'Parabéns!' : pontuacao >= perguntas.length / 2 ? 'Bom trabalho!' : 'Continue estudando!' }}
+            </h5>
+          </div>
+          
+          <div class="resultado-pontuacao">
+            Você acertou <strong>{{ pontuacao }}</strong> de <strong>{{ perguntas.length }}</strong> perguntas
+          </div>
+          
+          <div class="resultado-detalhes">
+            <div class="detalhe-item" *ngFor="let pergunta of perguntas; let i = index">
+              <div class="detalhe-icone">
+                {{ respostasSelecionadas[i] === pergunta.respostaCorreta ? '✅' : '❌' }}
+              </div>
+              <div class="detalhe-texto">
+                <strong>{{ pergunta.pergunta }}</strong>
+                <p *ngIf="respostasSelecionadas[i] !== pergunta.respostaCorreta" class="resposta-correta">
+                  Resposta correta: {{ pergunta.opcoes[pergunta.respostaCorreta] }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <button class="quiz-reiniciar" (click)="reiniciarQuiz()">
+            🔄 Fazer Quiz Novamente
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
