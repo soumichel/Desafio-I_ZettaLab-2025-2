@@ -1,0 +1,66 @@
+<div class="home-container">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <h1 class="hero-title">{{ projeto.titulo }}</h1>
+      <p class="hero-subtitle">{{ projeto.subtitulo }}</p>
+      <p class="hero-description">{{ projeto.descricao }}</p>
+    </div>
+  </section>
+
+  <!-- Objetivos Section -->
+  <section class="objetivos-section">
+    <h2 class="section-title">Objetivos do Projeto</h2>
+    <div class="objetivos-grid">
+      <div class="objetivo-card" *ngFor="let objetivo of projeto.objetivos; let i = index">
+        <div class="objetivo-numero">{{ i + 1 }}</div>
+        <p class="objetivo-texto">{{ objetivo }}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sobre Section -->
+  <section class="sobre-section">
+    <div class="sobre-grid">
+      <div class="sobre-card">
+        <h3 class="sobre-titulo">{{ zettaLab.nome }}</h3>
+        <p class="sobre-descricao">{{ zettaLab.descricao }}</p>
+        <div class="sobre-destaque">
+          <strong>Missão:</strong> {{ zettaLab.missao }}
+        </div>
+      </div>
+
+      <div class="sobre-card">
+        <h3 class="sobre-titulo">{{ ufla.sigla }}</h3>
+        <p class="sobre-subtitulo">{{ ufla.nome }}</p>
+        <p class="sobre-descricao">{{ ufla.descricao }}</p>
+        <div class="sobre-localizacao">
+          <span class="icone">📍</span> {{ ufla.localizacao }}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Fontes de Dados Section -->
+  <section class="fontes-section">
+    <h2 class="section-title">Fontes de Dados</h2>
+    <div class="fontes-grid">
+      <div class="fonte-card" *ngFor="let fonte of fontesDados">
+        <div class="fonte-icone">{{ fonte.icone }}</div>
+        <h4 class="fonte-nome">{{ fonte.nome }}</h4>
+        <p class="fonte-descricao">{{ fonte.descricao }}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section class="cta-section">
+    <h2 class="cta-titulo">Explore os Dados</h2>
+    <p class="cta-texto">Navegue pelas diferentes seções para acessar informações públicas e análises detalhadas</p>
+    <div class="cta-buttons">
+      <a routerLink="/busca" class="cta-button cta-primary">Buscar Dados</a>
+      <a routerLink="/analise" class="cta-button cta-secondary">Ver Análises</a>
+      <a routerLink="/educativo" class="cta-button cta-tertiary">Conteúdo Educativo</a>
+    </div>
+  </section>
+</div>
