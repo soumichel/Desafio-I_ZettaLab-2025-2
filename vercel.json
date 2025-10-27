@@ -1,0 +1,5 @@
+{
+  "buildCommand": "chmod +x build.sh && ./build.sh",
+  "outputDirectory": "dist/Desafio-I_ZettaLab-2025-2/browser",
+  "framework": "angular"
+}

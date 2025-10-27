@@ -150,18 +150,23 @@ cd Desafio-I_ZettaLab-2025-2
 npm install
 ```
 
-### **3. Configure as Variáveis de Ambiente**
+### **3. Configure a Chave da API**
 
-O projeto utiliza variáveis de ambiente para armazenar chaves de API sensíveis.
+O projeto requer uma chave de API do Portal da Transparência para funcionar.
 
-#### **Arquivo `src/environments/environment.example.ts`**
+#### **Como Obter a Chave da API**
 
-Este arquivo **já está configurado** e contém a chave da API do Portal da Transparência:
+1. Acesse [Portal da Transparência - API](https://portaldatransparencia.gov.br/api-de-dados/cadastrar-email)
+2. Cadastre-se e copie a chave de acesso (A chave de acesso é de uso pessoal, intransferível e de conhecimento exclusivo. É da inteira responsabilidade do usuário todo e qualquer prejuízo causado pelo fornecimento de sua chave pessoal a terceiros)
+
+#### **Configure no Arquivo:**
+
+1. Abra o arquivo `src/environments/environment.ts`
+2. Substitua a string vazia pela sua chave:
 
 ```typescript
 export const environment = {
-  production: false,
-  transparenciaApiKey: 'SUA_CHAVE_AQUI'
+  transparenciaApiKey: 'cole_sua_chave_aqui'
 };
 ```
 
@@ -174,13 +179,7 @@ Para ambientes de produção, você pode criar um arquivo `.env` na raiz do proj
 TRANSPARENCIA_API_KEY=sua_chave_api_aqui
 ```
 
-⚠️ **Importante:** O arquivo `.env` está listado no `.gitignore` e **não deve** ser commitado. Use o arquivo `environment.example.ts` como referência.
-
-#### **Como Obter a Chave da API**
-
-1. Acesse [Portal da Transparência - API](https://portaldatransparencia.gov.br/api-de-dados/cadastrar-email)
-2. Cadastre-se e copie a chave de acesso (A chave de acesso é de uso pessoal, intransferível e de conhecimento exclusivo. É da inteira responsabilidade do usuário todo e qualquer prejuízo causado pelo fornecimento de sua chave pessoal a terceiros)
-3. Substitua `'SUA_CHAVE_AQUI'` no arquivo `environment.ts`
+⚠️ **Importante:** O arquivo `.env` está listado no `.gitignore` e **não deve** ser commitado.
 
 ---
 
@@ -326,7 +325,7 @@ Desafio-I_ZettaLab-2025-2/
 │   │   └── app.ts               # Componente raiz
 │   │
 │   ├── environments/             # Variáveis de ambiente
-│   │   └── environment.example.ts
+│   │   └── environment.ts       # Configuração de API keys
 │   │
 │   ├── index.html               # HTML principal
 │   ├── main.ts                  # Entry point
