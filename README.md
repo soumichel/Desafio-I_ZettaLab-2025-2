@@ -12,18 +12,18 @@
 
 ## 📋 Índice
 
-- [Sobre o Projeto](#sobre-o-projeto)
-- [Sobre a ZettaLab](#sobre-a-zettalab)
-- [Funcionalidades](#funcionalidades)
-- [Tecnologias Utilizadas](#tecnologias-utilizadas)
-- [Pré-requisitos](#pré-requisitos)
-- [Instalação e Configuração](#instalação-e-configuração)
-- [Como Executar](#como-executar)
+- [Sobre o Projeto](#-sobre-o-projeto)
+- [Sobre a ZettaLab](#-sobre-a-zettalab)
+- [Funcionalidades](#-funcionalidades)
+- [Tecnologias Utilizadas](#-tecnologias-utilizadas)
+- [Pré-requisitos](#-pré-requisitos)
+- [Instalação e Configuração](#-instalação-e-configuração)
+- [Como Executar](#-como-executar)
   - [Método 1: Angular CLI](#método-1-angular-cli)
   - [Método 2: Docker](#método-2-docker)
-- [Estrutura do Projeto](#estrutura-do-projeto)
-- [APIs Integradas](#apis-integradas)
-- [Licença](#licença)
+- [Estrutura do Projeto](#-estrutura-do-projeto)
+- [APIs Integradas](#-apis-integradas)
+- [Licença](#-licença)
 
 ---
 
