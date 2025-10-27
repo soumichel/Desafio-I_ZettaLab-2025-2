@@ -1,4 +1,15 @@
-/* You can add global styles to this file, and also import other style files */
+// ============================================
+// CORES DA BANDEIRA DO BRASIL
+// ============================================
+:root {
+  --brasil-verde: #009739;
+  --brasil-verde-escuro: #007a2e;
+  --brasil-amarelo: #FEDD00;
+  --brasil-amarelo-escuro: #e6c700;
+  --brasil-azul: #002776;
+  --brasil-azul-escuro: #001a57;
+  --brasil-branco: #ffffff;
+}
 
 html {
   height: 100%;
@@ -8,4 +19,5 @@ body {
   min-height: 100%;
   margin: 0;
   padding: 0;
+  background-color: var(--brasil-branco);
 }
